@@ -21,7 +21,7 @@ pub struct Opt {
     show_all: bool,
 
     /// Set the depth of the iteraton
-    #[structopt(short = "l", default_value = "0")]
+    #[structopt(short = "L", default_value = "0")]
     level: usize,
 
     /// Directory to start with
