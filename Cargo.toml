@@ -1,0 +1,19 @@
+[package]
+name = "tree"
+description = "Tree command, written in Rust"
+version = "0.1.0"
+authors = ["Alexander Weiß"]
+readme = "README.md"
+license = "MIT"
+keyword= ["tree", "unix"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+structopt = "0.2"
+
+[[bin]]
+name = "rstree"
+path = "src/bin/tree.rs"
+
+[profile.release]
+lto = true
