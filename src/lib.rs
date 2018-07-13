@@ -47,20 +47,14 @@ fn visit_dirs(
     }
 
     if dir.is_dir() {
-        let entry_set = fs::read_dir(dir)?;
+        let entry_set = fs::read_dir(dir)?; // contains DirEntry
         let mut entries = entry_set
             .filter_map(|v| match v.ok() {
                 Some(v) => {
                     if show_all {
                         return Some(v);
                     } else {
-                        if v.path()
-                            .file_name()
-                            .unwrap()
-                            .to_str()
-                            .unwrap()
-                            .starts_with(".")
-                        {
+                        if v.file_name().to_str()?.starts_with(".") {
                             return None;
                         } else {
                             Some(v)
@@ -76,14 +70,14 @@ fn visit_dirs(
             let path = entry.path();
 
             if index == entries.len() - 1 {
-                println!("{}└── {}", prefix, color_output(colorize, &path));
+                println!("{}└── {}", prefix, color_output(colorize, &path)?);
                 if path.is_dir() {
                     let depth = depth + 1;
                     let prefix_new = prefix.clone() + "    ";
                     visit_dirs(&path, depth, level, prefix_new, colorize, show_all)?
                 }
             } else {
-                println!("{}├── {}", prefix, color_output(colorize, &path));
+                println!("{}├── {}", prefix, color_output(colorize, &path)?);
                 if path.is_dir() {
                     let depth = depth + 1;
                     let prefix_new = prefix.clone() + "│   ";
@@ -104,7 +98,7 @@ fn is_executable(path: &Path) -> bool {
     metadata.permissions().mode() & 0o111 != 0
 }
 
-fn color_output(colorize: bool, path: &Path) -> String {
+fn color_output(colorize: bool, path: &Path) -> io::Result<String> {
     let filename = path.file_name().unwrap().to_str().unwrap();
     let symlink = match fs::read_link(path) {
         Ok(v) => v,
@@ -121,29 +115,29 @@ fn color_output(colorize: bool, path: &Path) -> String {
     match colorize {
         true => {
             if path.is_dir() {
-                format!(
+                Ok(format!(
                     "{}{}{}",
                     ANSIColor::YELLOW.as_string(),
                     print_name,
                     ANSIColor::RESET.as_string()
-                )
+                ))
             } else if is_executable(&path) {
-                format!(
+                Ok(format!(
                     "{}{}{}",
                     ANSIColor::GREEN.as_string(),
                     print_name,
                     ANSIColor::RESET.as_string()
-                )
+                ))
             } else {
-                format!(
+                Ok(format!(
                     "{}{}{}",
                     ANSIColor::MAGENTA.as_string(),
                     print_name,
                     ANSIColor::RESET.as_string()
-                )
+                ))
             }
         }
-        false => format!("{}", print_name),
+        false => Ok(format!("{}", print_name)),
     }
 }
 

@@ -1,9 +1,7 @@
 # rstree
 
-This little application implements the `tree` command in Rust. There might be a lot of tree rewrites in Rust out there. This project is intended to learn the language and try out as many things as possible.
-If you find something to change, issues or anything else feel free to open an issue.
-
-It is also very likely that this implementation is not as idiomatic as it could be. If you have suggestions on how to improve my code I would be happy to hear them !
+This little application implements the `tree` command in Rust. With this project I want to learn the language and find out how to do things.
+It is also very likely that this implementation is not as idiomatic as it could be. If you have suggestions on how to improve my code I would be happy to hear them. Feel free to create an issue and let me know what I can improve.
 
 ## Usage
 
@@ -22,7 +20,7 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-    -l <level>        Set the depth of the iteraton [default: 0]
+    -L <level>        Set the depth of the iteraton [default: 0]
 
 ARGS:
     <DIRECTORY>    Directory to start with [default: .]
@@ -40,3 +38,9 @@ Implement the following options and flags:
 - -J Prints out an JSON representation of the tree.
 
 These is a non exhaustive list of the original `tree` options. I might extend the list as I proceed with the implementation.
+
+## Contribution
+
+Since this project is intended to learn the language I might not accept every pull request because I want to implement things on my own. But as I said if you have suggestions I would appreciate if you leave an issue.
+
+Stay rusty 🦀
