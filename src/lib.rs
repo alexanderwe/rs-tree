@@ -41,6 +41,7 @@ fn visit_dirs(
     prefix: String,
     colorize: bool,
     show_all: bool,
+    show_dirs_only: bool,
 ) -> io::Result<()> {
     if (level != 0) & (depth == level) {
         return Ok(());
@@ -50,20 +51,28 @@ fn visit_dirs(
         let entry_set = fs::read_dir(dir)?; // contains DirEntry
         let mut entries = entry_set
             .filter_map(|v| match v.ok() {
-                Some(v) => {
-                    if show_all {
-                        return Some(v);
-                    } else {
-                        if v.file_name().to_str()?.starts_with(".") {
-                            return None;
-                        } else {
-                            Some(v)
-                        }
-                    }
-                }
+                Some(v) => Some(v),
                 None => None,
             })
             .collect::<Vec<_>>();
+
+        if show_dirs_only {
+            entries = entries
+                .into_iter()
+                .filter(|ref v| v.path().is_dir())
+                .collect::<Vec<_>>();
+        }
+
+        if !show_all {
+            entries = entries
+                .into_iter()
+                .filter(|ref v| match v.file_name().to_str() {
+                    Some(v) => return !v.starts_with("."),
+                    None => return false,
+                })
+                .collect::<Vec<_>>();
+        }
+
         entries.sort_by(|a, b| a.path().file_name().cmp(&b.path().file_name()));
 
         for (index, entry) in entries.iter().enumerate() {
@@ -71,17 +80,35 @@ fn visit_dirs(
 
             if index == entries.len() - 1 {
                 println!("{}└── {}", prefix, color_output(colorize, &path)?);
+
                 if path.is_dir() {
                     let depth = depth + 1;
                     let prefix_new = prefix.clone() + "    ";
-                    visit_dirs(&path, depth, level, prefix_new, colorize, show_all)?
+                    visit_dirs(
+                        &path,
+                        depth,
+                        level,
+                        prefix_new,
+                        colorize,
+                        show_all,
+                        show_dirs_only,
+                    )?
                 }
             } else {
                 println!("{}├── {}", prefix, color_output(colorize, &path)?);
+
                 if path.is_dir() {
                     let depth = depth + 1;
                     let prefix_new = prefix.clone() + "│   ";
-                    visit_dirs(&path, depth, level, prefix_new, colorize, show_all)?
+                    visit_dirs(
+                        &path,
+                        depth,
+                        level,
+                        prefix_new,
+                        colorize,
+                        show_all,
+                        show_dirs_only,
+                    )?
                 }
             }
         }
@@ -141,7 +168,21 @@ fn color_output(colorize: bool, path: &Path) -> io::Result<String> {
     }
 }
 
-pub fn run(show_all: bool, colorize: bool, level: usize, dir: &Path) -> Result<(), Box<Error>> {
-    visit_dirs(&dir, 0, level, String::from(""), colorize, show_all)?;
+pub fn run(
+    show_all: bool,
+    show_dirs_only: bool,
+    colorize: bool,
+    level: usize,
+    dir: &Path,
+) -> Result<(), Box<Error>> {
+    visit_dirs(
+        &dir,
+        0,
+        level,
+        String::from(""),
+        colorize,
+        show_all,
+        show_dirs_only,
+    )?;
     Ok(())
 }

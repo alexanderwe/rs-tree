@@ -1,5 +1,5 @@
 [package]
-name = "tree"
+name = "rstree"
 description = "Tree command, written in Rust"
 version = "0.1.0"
 authors = ["Alexander Weiß"]
@@ -13,7 +13,7 @@ structopt = "0.2"
 
 [[bin]]
 name = "rstree"
-path = "src/bin/tree.rs"
+path = "src/bin/rstree.rs"
 
 [profile.release]
 lto = true

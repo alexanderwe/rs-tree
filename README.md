@@ -17,6 +17,7 @@ FLAGS:
     -c               Colorize output
     -h, --help       Prints help information
     -a               Print all files, including hidden
+    -d               show only dirs
     -V, --version    Prints version information
 
 OPTIONS:
@@ -30,7 +31,6 @@ ARGS:
 
 Implement the following options and flags:
 
-- -d List directories only.
 - -l Follow symbolic links like directories.
 - -f Print the full path prefix for each file.
 - -P pattern List only those files that match the pattern given.

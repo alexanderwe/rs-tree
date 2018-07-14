@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate structopt;
 
-extern crate tree;
+extern crate rstree;
 
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -17,8 +17,12 @@ pub struct Opt {
     colorize: bool,
 
     /// Print all files, including hidden
-    #[structopt(short = "a")]
+    #[structopt(short = "a", conflicts_with = "d")]
     show_all: bool,
+
+    /// show only dirs
+    #[structopt(short = "d")]
+    show_dirs_only: bool,
 
     /// Set the depth of the iteraton
     #[structopt(short = "L", default_value = "0")]
@@ -33,7 +37,13 @@ fn main() {
     let opt = Opt::from_args();
     println!("{:?}", opt);
 
-    if let Err(e) = tree::run(opt.show_all, opt.colorize, opt.level, &opt.directory) {
+    if let Err(e) = rstree::run(
+        opt.show_all,
+        opt.show_dirs_only,
+        opt.colorize,
+        opt.level,
+        &opt.directory,
+    ) {
         eprintln!("Application error: {}", e);
 
         process::exit(1);
